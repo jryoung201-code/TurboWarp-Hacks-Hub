@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TurboWarp Ext Hub</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0a14;--surface:#12121f;--surface2:#1a1a2e;--surface3:#222238;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --text:#f0f0ff;--muted:#8888aa;
+  --accent:#4f46e5;--accent-h:#4338ca;--accent-l:rgba(79,70,229,0.15);--accent-b:rgba(99,102,241,0.4);
+  --green:#10b981;--green-l:rgba(16,185,129,0.12);--green-b:rgba(16,185,129,0.35);
+  --red:#ef4444;--red-l:rgba(239,68,68,0.12);--red-b:rgba(239,68,68,0.35);
+  --amber:#f59e0b;--amber-l:rgba(245,158,11,0.12);--amber-b:rgba(245,158,11,0.35);
+  --trusted:#06b6d4;--trusted-l:rgba(6,182,212,0.12);--trusted-b:rgba(6,182,212,0.35);
+  --trusted-gold:#fbbf24;--trusted-gold-l:rgba(251,191,36,0.12);--trusted-gold-b:rgba(251,191,36,0.35);
+  --r:12px;--rs:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;}
+a{color:inherit;text-decoration:none;}
+button{font-family:'Syne',sans-serif;cursor:pointer;}
+
+nav{background:var(--surface);border-bottom:0.5px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;gap:10px;height:56px;position:sticky;top:0;z-index:50;}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.nav-logo-icon{width:34px;height:34px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.nav-logo-text{font-size:17px;font-weight:800;}.nav-logo-text span{color:#818cf8;}
+.nav-sp{flex:1;}
+.nav-pill{font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);background:var(--surface2);border:0.5px solid var(--border);border-radius:6px;padding:3px 10px;}
+.nav-btn{padding:6px 13px;border-radius:var(--rs);font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;transition:all 0.15s;border:0.5px solid;}
+.nav-btn-mod{background:var(--amber-l);border-color:var(--amber-b);color:var(--amber);}
+.nav-btn-mod:hover{background:rgba(245,158,11,0.22);}
+.nav-btn-admin{background:var(--trusted-gold-l);border-color:var(--trusted-gold-b);color:var(--trusted-gold);}
+.nav-btn-admin:hover{background:rgba(251,191,36,0.22);}
+
+.page{display:none;}.page.active{display:block;}
+.container{max-width:980px;margin:0 auto;padding:2rem 1.5rem;}
+
+.hero{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:2rem;margin-bottom:1.5rem;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,#4f46e5 0%,transparent 70%);opacity:0.2;pointer-events:none;}
+.hero h1{font-size:26px;font-weight:800;margin-bottom:6px;}.hero h1 span{color:#818cf8;}
+.hero p{font-size:13px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:1rem;}
+.hero-stats{display:flex;gap:10px;flex-wrap:wrap;}
+.hero-stat{background:var(--accent-l);border:0.5px solid var(--accent-b);border-radius:6px;padding:3px 12px;font-size:11px;color:#a5b4fc;font-family:'Space Mono',monospace;}
+.hero-stat-trusted{background:var(--trusted-gold-l);border-color:var(--trusted-gold-b);color:var(--trusted-gold);}
+
+.controls{display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center;}
+.search-wrap{flex:1;min-width:200px;position:relative;}
+.search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px;pointer-events:none;}
+.search-input{width:100%;padding:9px 12px 9px 38px;background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--rs);color:var(--text);font-size:14px;font-family:'Syne',sans-serif;outline:none;transition:border-color 0.15s;}
+.search-input:focus{border-color:var(--accent);}
+.filter-btn{padding:7px 13px;background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--rs);color:var(--muted);font-size:12px;transition:all 0.15s;}
+.filter-btn:hover,.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.filter-btn-trusted.active{background:var(--trusted-gold-l);color:var(--trusted-gold);border-color:var(--trusted-gold-b);}
+
+.upload-zone{border:2px dashed var(--accent);border-radius:var(--r);padding:1.5rem;text-align:center;background:var(--accent-l);margin-bottom:1.5rem;cursor:pointer;transition:all 0.2s;}
+.upload-zone:hover,.upload-zone.dragover{background:rgba(79,70,229,0.22);border-color:#818cf8;}
+.upload-zone-icon{font-size:26px;color:var(--accent);margin-bottom:8px;}
+.upload-zone h3{font-size:15px;font-weight:700;margin-bottom:4px;}
+.upload-zone p{font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;}
+.upload-btn{display:inline-block;margin-top:10px;padding:7px 18px;background:var(--accent);color:#fff;border-radius:var(--rs);font-size:13px;font-weight:700;border:none;}
+.upload-btn:hover{background:var(--accent-h);}
+#file-input{display:none;}
+
+.section-label{font-size:10px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+
+/* TRUSTED BADGE */
+.trusted-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:5px;font-family:'Space Mono',monospace;font-weight:700;background:var(--trusted-gold-l);color:var(--trusted-gold);border:0.5px solid var(--trusted-gold-b);}
+.trusted-badge i{font-size:10px;}
+
+/* TRUSTED RIBBON on card */
+.trusted-ribbon{position:absolute;top:0;right:0;background:var(--trusted-gold);color:#000;font-size:9px;font-weight:700;font-family:'Space Mono',monospace;padding:3px 10px 3px 14px;border-radius:0 var(--r) 0 20px;display:flex;align-items:center;gap:3px;letter-spacing:0.5px;}
+
+.ext-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;}
+.ext-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:1rem 1.1rem;cursor:pointer;transition:border-color 0.15s,transform 0.15s;position:relative;display:block;}
+.ext-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.ext-card.is-trusted{border-color:rgba(251,191,36,0.3);}
+.ext-card.is-trusted:hover{border-color:var(--trusted-gold);}
+.ext-card-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.ext-emoji{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.ext-name{font-size:13px;font-weight:700;line-height:1.2;}
+.ext-author{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;}
+.ext-desc{font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.5;}
+.ext-footer{display:flex;align-items:center;justify-content:space-between;}
+.ext-tag{font-size:10px;padding:2px 7px;border-radius:5px;font-family:'Space Mono',monospace;font-weight:700;text-transform:uppercase;}
+.tag-hack{background:var(--red-l);color:#f87171;}
+.tag-extension{background:var(--accent-l);color:#a5b4fc;}
+.tag-mod{background:var(--green-l);color:#6ee7b7;}
+.ext-dl-count{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);}
+.new-badge{position:absolute;top:8px;right:8px;background:var(--accent);color:#fff;font-size:9px;font-weight:700;font-family:'Space Mono',monospace;padding:2px 7px;border-radius:4px;}
+
+.status-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:5px;font-family:'Space Mono',monospace;font-weight:700;}
+.status-approved{background:var(--green-l);color:#6ee7b7;border:0.5px solid var(--green-b);}
+.status-pending{background:var(--amber-l);color:var(--amber);border:0.5px solid var(--amber-b);}
+.status-rejected{background:var(--red-l);color:#f87171;border:0.5px solid var(--red-b);}
+
+/* DOWNLOAD PAGE */
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:0.5px solid var(--border2);border-radius:var(--rs);background:transparent;color:var(--muted);font-size:13px;margin-bottom:1.25rem;transition:all 0.15s;}
+.back-btn:hover{border-color:var(--accent);color:#a5b4fc;}
+
+.dl-hero{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:2rem;margin-bottom:1.25rem;position:relative;overflow:hidden;}
+.dl-hero.trusted-hero{border-color:rgba(251,191,36,0.35);}
+.dl-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;background:radial-gradient(circle,#4f46e5 0%,transparent 70%);opacity:0.2;pointer-events:none;}
+.dl-hero.trusted-hero::before{background:radial-gradient(circle,#fbbf24 0%,transparent 70%);opacity:0.12;}
+.dl-hero-top{display:flex;align-items:flex-start;gap:18px;margin-bottom:1.25rem;}
+.dl-big-emoji{width:64px;height:64px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0;}
+.dl-name{font-size:24px;font-weight:800;margin-bottom:4px;}
+.dl-author{font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:8px;}
+.dl-badges{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.dl-stats{display:flex;gap:24px;flex-wrap:wrap;}
+.dl-stat{display:flex;flex-direction:column;gap:2px;}
+.dl-stat-num{font-size:22px;font-weight:800;}
+.dl-stat-label{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;}
+
+/* TRUSTED BANNER on dl page */
+.trusted-banner{background:linear-gradient(135deg,rgba(251,191,36,0.1),rgba(245,158,11,0.06));border:0.5px solid var(--trusted-gold-b);border-radius:var(--rs);padding:10px 16px;display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.trusted-banner-text{font-size:13px;color:var(--trusted-gold);font-weight:700;}
+.trusted-banner-sub{font-size:11px;color:rgba(251,191,36,0.7);font-family:'Space Mono',monospace;}
+
+.dl-body{display:grid;grid-template-columns:1fr 240px;gap:12px;align-items:start;}
+@media(max-width:640px){.dl-body{grid-template-columns:1fr;}}
+
+.info-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:12px;}
+.info-card:last-child{margin-bottom:0;}
+.info-card-title{font-size:10px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+.info-card-text{font-size:13px;color:var(--text);line-height:1.7;}
+
+.scratch-link-card{background:linear-gradient(135deg,rgba(255,140,0,0.08),rgba(255,100,0,0.05));border:0.5px solid rgba(255,140,0,0.3);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:12px;display:flex;align-items:center;gap:14px;}
+.scratch-cat{font-size:26px;}
+.scratch-link-info{flex:1;}
+.scratch-link-label{font-size:10px;font-family:'Space Mono',monospace;color:rgba(255,180,80,0.8);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+.scratch-link-name{font-size:14px;font-weight:700;color:#ffb347;margin-bottom:2px;}
+.scratch-link-sub{font-size:11px;color:var(--muted);}
+.scratch-open-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(255,140,0,0.15);border:0.5px solid rgba(255,140,0,0.4);border-radius:var(--rs);color:#ffb347;font-size:12px;font-weight:700;white-space:nowrap;transition:all 0.15s;}
+.scratch-open-btn:hover{background:rgba(255,140,0,0.25);}
+
+.version-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:0.5px solid var(--border);}
+.version-row:last-child{border-bottom:none;padding-bottom:0;}
+.version-name{font-size:13px;font-weight:700;}
+.version-date{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;}
+.version-dl-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:700;transition:background 0.15s;}
+.version-dl-btn:hover{background:var(--accent-h);}
+
+.big-dl-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;transition:background 0.15s;}
+.big-dl-btn:hover{background:var(--accent-h);}
+
+.install-steps{font-size:12px;color:var(--muted);line-height:2.1;}
+.install-steps code{font-family:'Space Mono',monospace;background:var(--surface2);padding:1px 6px;border-radius:4px;font-size:11px;color:var(--text);}
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;}
+.meta-tag{font-size:11px;padding:3px 8px;border-radius:5px;background:var(--surface2);border:0.5px solid var(--border);color:var(--muted);font-family:'Space Mono',monospace;}
+.stars{color:var(--amber);font-size:15px;letter-spacing:1px;}
+.detail-list{font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;line-height:2.2;}
+
+/* MODERATION PAGE */
+.mod-header{display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap;}
+.mod-header h2{font-size:22px;font-weight:800;}
+.mod-tabs{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap;}
+.mod-tab{padding:7px 16px;background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--rs);color:var(--muted);font-size:12px;font-weight:700;transition:all 0.15s;}
+.mod-tab:hover,.mod-tab.active{background:var(--surface2);color:var(--text);border-color:var(--border2);}
+.mod-tab.active{border-color:var(--accent);color:#a5b4fc;}
+.mod-count{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;border-radius:9px;font-size:10px;font-weight:700;margin-left:5px;padding:0 4px;}
+.mc-pending{background:var(--amber-l);color:var(--amber);}
+.mc-approved{background:var(--green-l);color:var(--green);}
+.mc-rejected{background:var(--red-l);color:var(--red);}
+.mc-trusted{background:var(--trusted-gold-l);color:var(--trusted-gold);}
+
+.mod-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem;}
+@media(max-width:560px){.mod-stats-row{grid-template-columns:repeat(2,1fr);}}
+.mod-stat-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;}
+.mod-stat-num{font-size:26px;font-weight:800;margin-bottom:2px;}
+.mod-stat-label{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;}
+.col-pending{color:var(--amber);}
+.col-approved{color:var(--green);}
+.col-rejected{color:var(--red);}
+.col-trusted{color:var(--trusted-gold);}
+
+.mod-list{display:flex;flex-direction:column;gap:10px;}
+.mod-item{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;transition:border-color 0.2s;}
+.mod-item.is-trusted{border-color:rgba(251,191,36,0.3);}
+.mod-item-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;}
+.mod-item-emoji{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.mod-item-info{flex:1;}
+.mod-item-name{font-size:15px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.mod-item-meta{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;}
+.mod-item-desc{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6;}
+.mod-item-scratch{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,180,80,0.85);font-family:'Space Mono',monospace;margin-bottom:10px;}
+.mod-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+
+.btn-approve{padding:7px 14px;background:var(--green-l);border:0.5px solid var(--green-b);border-radius:var(--rs);color:var(--green);font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:5px;transition:all 0.15s;}
+.btn-approve:hover{background:rgba(16,185,129,0.22);}
+.btn-reject{padding:7px 14px;background:var(--red-l);border:0.5px solid var(--red-b);border-radius:var(--rs);color:var(--red);font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:5px;transition:all 0.15s;}
+.btn-reject:hover{background:rgba(239,68,68,0.22);}
+.btn-view{padding:7px 14px;background:var(--accent-l);border:0.5px solid var(--accent-b);border-radius:var(--rs);color:#a5b4fc;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:5px;transition:all 0.15s;}
+.btn-view:hover{background:rgba(79,70,229,0.25);}
+
+/* TRUST BUTTON */
+.btn-trust{padding:7px 14px;background:var(--trusted-gold-l);border:0.5px solid var(--trusted-gold-b);border-radius:var(--rs);color:var(--trusted-gold);font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:5px;transition:all 0.15s;}
+.btn-trust:hover{background:rgba(251,191,36,0.22);}
+.btn-untrust{padding:7px 14px;background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--rs);color:var(--muted);font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:5px;transition:all 0.15s;}
+.btn-untrust:hover{background:var(--red-l);border-color:var(--red-b);color:var(--red);}
+
+.mod-reason-wrap{margin-top:8px;}
+.mod-reason-input{width:100%;padding:7px 10px;background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--rs);color:var(--text);font-size:12px;font-family:'Space Mono',monospace;outline:none;margin-bottom:6px;}
+.mod-reason-input:focus{border-color:var(--red);}
+.rejection-note{background:var(--red-l);border:0.5px solid var(--red-b);border-radius:var(--rs);padding:8px 12px;font-size:12px;color:#f87171;font-family:'Space Mono',monospace;margin-top:8px;}
+
+/* TRUSTED NOTE in mod panel */
+.trusted-note{background:var(--trusted-gold-l);border:0.5px solid var(--trusted-gold-b);border-radius:var(--rs);padding:8px 12px;font-size:12px;color:var(--trusted-gold);font-family:'Space Mono',monospace;margin-top:8px;display:flex;align-items:center;gap:6px;}
+
+/* ADMIN PAGE */
+.admin-login-wrap{max-width:380px;margin:3rem auto;}
+.admin-card{background:var(--surface);border:0.5px solid var(--trusted-gold-b);border-radius:var(--r);padding:2rem;}
+.admin-card h2{font-size:20px;font-weight:800;margin-bottom:6px;}
+.admin-card p{font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:1.5rem;}
+.admin-input{width:100%;padding:10px 14px;background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--rs);color:var(--text);font-size:14px;font-family:'Space Mono',monospace;outline:none;margin-bottom:10px;letter-spacing:2px;}
+.admin-input:focus{border-color:var(--trusted-gold);}
+.admin-login-btn{width:100%;padding:10px;background:var(--trusted-gold);color:#000;border:none;border-radius:var(--rs);font-size:14px;font-weight:700;font-family:'Syne',sans-serif;}
+.admin-login-btn:hover{opacity:0.9;}
+.admin-error{font-size:12px;color:var(--red);font-family:'Space Mono',monospace;margin-top:6px;display:none;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--surface);border:0.5px solid var(--border2);border-radius:var(--r);padding:1.5rem;width:380px;max-width:95vw;max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:4px;}
+.modal-sub{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:1rem;}
+.form-group{margin-bottom:10px;}
+.form-label{font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);display:block;margin-bottom:4px;}
+.form-label span{color:var(--red);margin-left:2px;}
+.form-input,.form-select,.form-textarea{width:100%;padding:8px 12px;background:var(--surface2);border:0.5px solid var(--border2);border-radius:var(--rs);color:var(--text);font-size:13px;font-family:'Syne',sans-serif;outline:none;transition:border-color 0.15s;}
+.form-textarea{resize:vertical;min-height:60px;font-size:12px;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);}
+.form-select option{background:var(--surface2);}
+.scratch-hint{font-size:11px;color:rgba(255,180,80,0.7);font-family:'Space Mono',monospace;margin-top:3px;}
+.modal-actions{display:flex;gap:8px;margin-top:1rem;}
+.btn-submit{flex:1;padding:9px;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);font-size:14px;font-weight:700;}
+.btn-submit:hover{background:var(--accent-h);}
+.btn-cancel{padding:9px 14px;background:transparent;color:var(--muted);border:0.5px solid var(--border2);border-radius:var(--rs);font-size:14px;}
+.file-chosen{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:6px;}
+
+.pending-banner{background:var(--amber-l);border:0.5px solid var(--amber-b);border-radius:var(--rs);padding:10px 14px;font-size:13px;color:var(--amber);display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.rejected-banner{background:var(--red-l);border:0.5px solid var(--red-b);border-radius:var(--rs);padding:10px 14px;font-size:13px;color:var(--red);display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--surface);border:0.5px solid var(--accent);border-radius:var(--rs);padding:10px 18px;font-size:13px;color:#a5b4fc;font-family:'Space Mono',monospace;z-index:200;opacity:0;transform:translateY(10px);transition:all 0.25s;pointer-events:none;max-width:320px;}
+.toast.show{opacity:1;transform:translateY(0);}
+.loading{text-align:center;padding:3rem;color:var(--muted);font-family:'Space Mono',monospace;font-size:13px;}
+.empty{text-align:center;padding:3rem;color:var(--muted);font-size:14px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="showPage('list')">
+    <div class="nav-logo-icon">⚡</div>
+    <div class="nav-logo-text">TurboWarp <span>Ext Hub</span></div>
+  </div>
+  <div class="nav-sp"></div>
+  <div class="nav-pill" id="nav-count">loading...</div>
+  <button class="nav-btn nav-btn-mod" onclick="showPage('mod')">
+    <i class="ti ti-shield-check" aria-hidden="true"></i> mod
+    <span id="nav-pending-badge" style="display:none;background:var(--amber);color:#000;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-left:2px;"></span>
+  </button>
+  <button class="nav-btn nav-btn-admin" onclick="showAdminGate()" id="admin-nav-btn">
+    <i class="ti ti-crown" aria-hidden="true"></i> <span id="admin-nav-label">admin</span>
+  </button>
+</nav>
+
+<div class="container">
+
+<!-- LIST PAGE -->
+<div id="page-list" class="page active">
+  <div class="hero">
+    <h1>TurboWarp <span>Extension Hub</span></h1>
+    <p>community extensions, hacks & mods — free forever</p>
+    <div class="hero-stats">
+      <div class="hero-stat" id="stat-total">— uploads</div>
+      <div class="hero-stat" id="stat-approved">— approved</div>
+      <div class="hero-stat hero-stat-trusted" id="stat-trusted">— trusted</div>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="search-wrap">
+      <i class="ti ti-search" aria-hidden="true"></i>
+      <input class="search-input" id="search-box" placeholder="search extensions, hacks, mods..."/>
+    </div>
+    <button class="filter-btn active" data-filter="all">all</button>
+    <button class="filter-btn" data-filter="extension">extensions</button>
+    <button class="filter-btn" data-filter="hack">hacks</button>
+    <button class="filter-btn" data-filter="mod">mods</button>
+    <button class="filter-btn filter-btn-trusted" data-filter="trusted">⭐ trusted</button>
+  </div>
+  <div class="upload-zone" id="drop-zone">
+    <div class="upload-zone-icon"><i class="ti ti-upload" aria-hidden="true"></i></div>
+    <h3>submit an extension or hack</h3>
+    <p>.js files · pending moderation review before going live</p>
+    <button class="upload-btn" id="open-modal-btn">submit file</button>
+    <input type="file" id="file-input" accept=".js"/>
+  </div>
+  <div class="section-label">showing <span id="browse-count">—</span> uploads</div>
+  <div class="ext-grid" id="ext-grid">
+    <div class="loading"><i class="ti ti-loader-2" aria-hidden="true"></i> loading from repo...</div>
+  </div>
+</div>
+
+<!-- DOWNLOAD PAGE -->
+<div id="page-dl" class="page">
+  <button class="back-btn" id="back-btn"><i class="ti ti-arrow-left" aria-hidden="true"></i> back to hub</button>
+  <div id="dl-status-banner"></div>
+  <div class="dl-hero" id="dl-hero"></div>
+  <div class="dl-body">
+    <div id="dl-main"></div>
+    <div id="dl-side"></div>
+  </div>
+</div>
+
+<!-- MODERATION PAGE -->
+<div id="page-mod" class="page">
+  <div class="mod-header">
+    <button class="back-btn" style="margin-bottom:0;" onclick="showPage('list')"><i class="ti ti-arrow-left" aria-hidden="true"></i> back</button>
+    <div>
+      <h2>🛡️ moderation panel</h2>
+      <div style="font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;">review, approve & assign trusted status</div>
+    </div>
+  </div>
+  <div class="mod-stats-row">
+    <div class="mod-stat-card"><div class="mod-stat-num col-pending" id="ms-pending">0</div><div class="mod-stat-label">pending</div></div>
+    <div class="mod-stat-card"><div class="mod-stat-num col-approved" id="ms-approved">0</div><div class="mod-stat-label">approved</div></div>
+    <div class="mod-stat-card"><div class="mod-stat-num col-rejected" id="ms-rejected">0</div><div class="mod-stat-label">rejected</div></div>
+    <div class="mod-stat-card"><div class="mod-stat-num col-trusted" id="ms-trusted">0</div><div class="mod-stat-label">trusted</div></div>
+  </div>
+  <div class="mod-tabs">
+    <button class="mod-tab active" data-mtab="pending">pending <span class="mod-count mc-pending" id="mtc-pending">0</span></button>
+    <button class="mod-tab" data-mtab="approved">approved <span class="mod-count mc-approved" id="mtc-approved">0</span></button>
+    <button class="mod-tab" data-mtab="rejected">rejected <span class="mod-count mc-rejected" id="mtc-rejected">0</span></button>
+    <button class="mod-tab" data-mtab="trusted">⭐ trusted <span class="mod-count mc-trusted" id="mtc-trusted">0</span></button>
+    <button class="mod-tab" data-mtab="all">all</button>
+  </div>
+  <div class="mod-list" id="mod-list"></div>
+</div>
+
+<!-- ADMIN GATE PAGE -->
+<div id="page-admin-gate" class="page">
+  <div class="admin-login-wrap">
+    <div class="admin-card">
+      <h2>👑 admin login</h2>
+      <p>enter the admin password to unlock trust controls</p>
+      <input class="admin-input" type="password" id="admin-pw" placeholder="password" autocomplete="off"/>
+      <div class="admin-error" id="admin-error">incorrect password</div>
+      <button class="admin-login-btn" onclick="tryAdminLogin()">unlock admin</button>
+      <div style="margin-top:12px;text-align:center;">
+        <button onclick="showPage('list')" style="background:transparent;border:none;color:var(--muted);font-size:12px;cursor:pointer;">← back to hub</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- SUBMIT MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">📦 submit extension</div>
+    <div class="modal-sub">goes into pending queue — reviewed before going live</div>
+    <div class="form-group"><label class="form-label">name <span>*</span></label><input class="form-input" id="inp-name" placeholder="e.g. Ultra Physics"/></div>
+    <div class="form-group"><label class="form-label">author / username <span>*</span></label><input class="form-input" id="inp-author" placeholder="your Scratch username"/></div>
+    <div class="form-group"><label class="form-label">description <span>*</span></label><textarea class="form-textarea" id="inp-desc" placeholder="what does it do?"></textarea></div>
+    <div class="form-group"><label class="form-label">type <span>*</span></label><select class="form-select" id="inp-type"><option value="extension">extension</option><option value="hack">hack</option><option value="mod">mod</option></select></div>
+    <div class="form-group"><label class="form-label">icon emoji</label><input class="form-input" id="inp-emoji" placeholder="🎮" maxlength="2"/></div>
+    <div class="form-group">
+      <label class="form-label">🐱 scratch project link</label>
+      <input class="form-input" id="inp-scratch" placeholder="https://scratch.mit.edu/projects/..."/>
+      <div class="scratch-hint">link the Scratch project this hack/extension works with</div>
+    </div>
+    <div class="form-group"><label class="form-label">tags (comma separated)</label><input class="form-input" id="inp-tags" placeholder="e.g. physics, sprites"/></div>
+    <div class="file-chosen" id="file-chosen"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancel-btn">cancel</button>
+      <button class="btn-submit" id="submit-btn">submit for review</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const REPO_BASE='./';
+const JSON_URL=REPO_BASE+'extensions.json';
+const ADMIN_PASSWORD='turboadmin2026'; // Change this!
+const emojiBg={extension:'#e8e8ff',hack:'#ffe0e0',mod:'#e8fff5'};
+const tagCls={extension:'tag-extension',hack:'tag-hack',mod:'tag-mod'};
+
+let allExts=[];
+let activeFilter='all';
+let searchQ='';
+let activeMTab='pending';
+let isAdmin=false;
+
+async function loadExtensions(){
+  try{
+    const res=await fetch(JSON_URL+'?t='+Date.now());
+    if(!res.ok)throw new Error('fail');
+    allExts=await res.json();
+    updateStats();render();renderMod();
+  }catch(e){
+    document.getElementById('ext-grid').innerHTML='<div class="loading">⚠️ Could not load extensions.json</div>';
+  }
+}
+
+function updateStats(){
+  const approved=allExts.filter(e=>e.status==='approved');
+  const pending=allExts.filter(e=>e.status==='pending');
+  const trusted=allExts.filter(e=>e.trusted);
+  document.getElementById('stat-total').textContent=allExts.length+' uploads';
+  document.getElementById('stat-approved').textContent=approved.length+' approved';
+  document.getElementById('stat-trusted').textContent=trusted.length+' trusted';
+  document.getElementById('nav-count').textContent=allExts.length+' uploads';
+  const pb=document.getElementById('nav-pending-badge');
+  pb.textContent=pending.length;
+  pb.style.display=pending.length?'inline-flex':'none';
+  document.getElementById('ms-pending').textContent=pending.length;
+  document.getElementById('ms-approved').textContent=approved.length;
+  document.getElementById('ms-rejected').textContent=allExts.filter(e=>e.status==='rejected').length;
+  document.getElementById('ms-trusted').textContent=trusted.length;
+  document.getElementById('mtc-pending').textContent=pending.length;
+  document.getElementById('mtc-approved').textContent=approved.length;
+  document.getElementById('mtc-rejected').textContent=allExts.filter(e=>e.status==='rejected').length;
+  document.getElementById('mtc-trusted').textContent=trusted.length;
+}
+
+function render(){
+  const grid=document.getElementById('ext-grid');
+  let list=allExts.filter(e=>{
+    if(e.status!=='approved')return false;
+    if(activeFilter==='trusted')return e.trusted;
+    const mf=activeFilter==='all'||e.type===activeFilter;
+    const ms=!searchQ||e.name.toLowerCase().includes(searchQ)||e.author.toLowerCase().includes(searchQ)||(e.desc||'').toLowerCase().includes(searchQ)||(e.tags||[]).some(t=>t.toLowerCase().includes(searchQ));
+    return mf&&ms;
+  });
+  // Sort: trusted first
+  list.sort((a,b)=>(b.trusted?1:0)-(a.trusted?1:0));
+  document.getElementById('browse-count').textContent=list.length;
+  if(!list.length){grid.innerHTML='<div class="empty"><i class="ti ti-mood-empty" style="font-size:26px;display:block;margin-bottom:8px;"></i>no results</div>';return;}
+  grid.innerHTML=list.map(e=>`
+    <div class="ext-card${e.trusted?' is-trusted':''}" onclick="showDl(${e.id})">
+      ${e.trusted?`<div class="trusted-ribbon"><i class="ti ti-rosette" style="font-size:10px;" aria-hidden="true"></i> TRUSTED</div>`:(e.isNew?'<div class="new-badge">NEW</div>':'')}
+      <div class="ext-card-header">
+        <div class="ext-emoji" style="background:${emojiBg[e.type]||'#eee'}">${e.emoji||'📦'}</div>
+        <div><div class="ext-name">${e.name}</div><div class="ext-author">by ${e.author}</div></div>
+      </div>
+      <div class="ext-desc">${(e.desc||'').length>80?e.desc.slice(0,80)+'…':(e.desc||'')}</div>
+      <div class="ext-footer">
+        <span class="ext-tag ${tagCls[e.type]||''}">${e.type}</span>
+        <div class="ext-dl-count"><i class="ti ti-download" style="font-size:12px;" aria-hidden="true"></i> ${(e.downloads||0).toLocaleString()}</div>
+      </div>
+    </div>`).join('');
+}
+
+function showDl(id){
+  const e=allExts.find(x=>x.id===id);
+  if(!e)return;
+  e.downloads=(e.downloads||0)+1;
+  showPage('dl');
+
+  const banner=document.getElementById('dl-status-banner');
+  if(e.status==='pending'){
+    banner.innerHTML=`<div class="pending-banner"><i class="ti ti-clock" aria-hidden="true"></i> awaiting moderation review — not yet public.</div>`;
+  }else if(e.status==='rejected'){
+    banner.innerHTML=`<div class="rejected-banner"><i class="ti ti-x" aria-hidden="true"></i> rejected.${e.rejectionReason?' reason: '+e.rejectionReason:''}</div>`;
+  }else{
+    banner.innerHTML='';
+  }
+
+  const stars='★'.repeat(Math.round(e.rating||0))+'☆'.repeat(5-Math.round(e.rating||0));
+  const statusHtml=`<span class="status-badge status-${e.status||'pending'}"><i class="ti ti-${e.status==='approved'?'check':e.status==='rejected'?'x':'clock'}" style="font-size:10px;"></i> ${e.status||'pending'}</span>`;
+  const trustedHtml=e.trusted?`<span class="trusted-badge"><i class="ti ti-rosette" aria-hidden="true"></i> trusted${e.trustedBy?' · by '+e.trustedBy:''}</span>`:'';
+
+  document.getElementById('dl-hero').className='dl-hero'+(e.trusted?' trusted-hero':'');
+  document.getElementById('dl-hero').innerHTML=`
+    <div class="dl-hero-top">
+      <div class="dl-big-emoji" style="background:${emojiBg[e.type]||'#eee'}">${e.emoji||'📦'}</div>
+      <div>
+        <div class="dl-name">${e.name}</div>
+        <div class="dl-author">by ${e.author}</div>
+        <div class="dl-badges">${statusHtml}${trustedHtml}<span class="ext-tag ${tagCls[e.type]||''}">${e.type}</span></div>
+      </div>
+    </div>
+    <div class="dl-stats">
+      <div class="dl-stat"><div class="dl-stat-num">${(e.downloads||0).toLocaleString()}</div><div class="dl-stat-label">downloads</div></div>
+      <div class="dl-stat"><div class="dl-stat-num">${(e.rating||0).toFixed(1)}</div><div class="dl-stat-label">rating</div></div>
+      <div class="dl-stat"><div class="dl-stat-num">${e.reviews||0}</div><div class="dl-stat-label">reviews</div></div>
+      <div class="dl-stat"><div class="dl-stat-num">${(e.versions||[]).length}</div><div class="dl-stat-label">versions</div></div>
+    </div>`;
+
+  const trustedBanner=e.trusted?`
+    <div class="trusted-banner">
+      <span style="font-size:22px;">⭐</span>
+      <div>
+        <div class="trusted-banner-text">trusted extension</div>
+        <div class="trusted-banner-sub">verified safe & working by ${e.trustedBy||'admin'}${e.trustedDate?' on '+e.trustedDate:''}</div>
+      </div>
+    </div>`:'' ;
+
+  const scratchHtml=e.scratchLink?`
+    <div class="scratch-link-card">
+      <div class="scratch-cat">🐱</div>
+      <div class="scratch-link-info">
+        <div class="scratch-link-label">scratch project</div>
+        <div class="scratch-link-name">${e.name} on Scratch</div>
+        <div class="scratch-link-sub">view the linked Scratch project</div>
+      </div>
+      <a class="scratch-open-btn" href="${e.scratchLink}" target="_blank" rel="noopener"><i class="ti ti-external-link" style="font-size:13px;" aria-hidden="true"></i> open</a>
+    </div>`:'';
+
+  document.getElementById('dl-main').innerHTML=`
+    ${trustedBanner}
+    ${scratchHtml}
+    <div class="info-card">
+      <div class="info-card-title">about</div>
+      <div class="info-card-text">${e.desc||'No description.'}</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">version history</div>
+      ${(e.versions||[]).map(v=>`
+        <div class="version-row">
+          <div><div class="version-name">${v.v}</div><div class="version-date">${v.date} · ${v.notes}</div></div>
+          <a class="version-dl-btn" href="${REPO_BASE}${v.file}" download><i class="ti ti-download" aria-hidden="true"></i> .js</a>
+        </div>`).join('')}
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">how to install</div>
+      <div class="install-steps">
+        1. Click <strong>Download latest</strong>.<br>
+        2. Open <code>TurboWarp</code> editor.<br>
+        3. Click <code>Extensions</code> → <code>Custom Extension</code>.<br>
+        4. Choose <code>Upload from file</code> → pick your <code>.js</code>.<br>
+        5. Hit <code>OK</code> — done! ⚡
+      </div>
+    </div>`;
+
+  document.getElementById('dl-side').innerHTML=`
+    <a class="big-dl-btn" href="${REPO_BASE}${e.file}" download><i class="ti ti-download" style="font-size:18px;" aria-hidden="true"></i> download latest</a>
+    <div class="info-card">
+      <div class="info-card-title">rating</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="stars">${stars}</span>
+        <span style="font-size:16px;font-weight:700;">${(e.rating||0).toFixed(1)}</span>
+        <span style="font-size:12px;color:var(--muted);">(${e.reviews||0})</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">tags</div>
+      <div class="tag-row">${(e.tags||[]).map(t=>`<span class="meta-tag">${t}</span>`).join('')}</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-title">details</div>
+      <div class="detail-list">
+        latest: ${(e.versions||[{v:'—'}])[0].v}<br>
+        updated: ${(e.versions||[{date:'—'}])[0].date}<br>
+        author: ${e.author}<br>
+        trusted: ${e.trusted?'✅ yes':'—'}
+      </div>
+    </div>`;
+}
+
+function renderMod(){
+  const list=document.getElementById('mod-list');
+  let items=activeMTab==='trusted'
+    ?allExts.filter(e=>e.trusted)
+    :activeMTab==='all'
+      ?allExts
+      :allExts.filter(e=>e.status===activeMTab);
+
+  if(!items.length){list.innerHTML='<div class="empty" style="padding:2rem;"><i class="ti ti-mood-empty" style="font-size:26px;display:block;margin-bottom:8px;"></i>nothing here</div>';return;}
+
+  list.innerHTML=items.map(e=>{
+    const trustBtn=isAdmin
+      ?(e.trusted
+        ?`<button class="btn-untrust" onclick="toggleTrust(${e.id})"><i class="ti ti-rosette-off" aria-hidden="true"></i> remove trusted</button>`
+        :`<button class="btn-trust" onclick="toggleTrust(${e.id})"><i class="ti ti-rosette" aria-hidden="true"></i> mark trusted</button>`)
+      :`<span style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;display:inline-flex;align-items:center;gap:4px;"><i class="ti ti-lock" aria-hidden="true"></i> admin only</span>`;
+
+    return `
+    <div class="mod-item${e.trusted?' is-trusted':''}" id="mod-item-${e.id}">
+      <div class="mod-item-header">
+        <div class="mod-item-emoji" style="background:${emojiBg[e.type]||'#eee'}">${e.emoji||'📦'}</div>
+        <div class="mod-item-info">
+          <div class="mod-item-name">
+            ${e.name}
+            <span class="status-badge status-${e.status||'pending'}">${e.status||'pending'}</span>
+            ${e.trusted?`<span class="trusted-badge"><i class="ti ti-rosette" aria-hidden="true"></i> trusted</span>`:''}
+          </div>
+          <div class="mod-item-meta">by ${e.author} · ${e.type} · ${(e.versions||[{v:'?'}])[0].v} · ${(e.versions||[{date:'?'}])[0].date}</div>
+        </div>
+      </div>
+      <div class="mod-item-desc">${e.desc||''}</div>
+      ${e.scratchLink
+        ?`<div class="mod-item-scratch"><i class="ti ti-brand-scratch" aria-hidden="true"></i> <a href="${e.scratchLink}" target="_blank" rel="noopener" style="color:rgba(255,180,80,0.85);text-decoration:underline;">${e.scratchLink}</a></div>`
+        :'<div class="mod-item-scratch" style="color:var(--muted);"><i class="ti ti-unlink" aria-hidden="true"></i> no scratch link</div>'}
+      <div class="mod-actions">
+        ${e.status!=='approved'?`<button class="btn-approve" onclick="moderateExt(${e.id},'approved')"><i class="ti ti-check" aria-hidden="true"></i> approve</button>`:''}
+        ${e.status!=='rejected'?`<button class="btn-reject" onclick="showRejectInput(${e.id})"><i class="ti ti-x" aria-hidden="true"></i> reject</button>`:''}
+        <button class="btn-view" onclick="showDl(${e.id});showPage('dl')"><i class="ti ti-eye" aria-hidden="true"></i> preview</button>
+        ${trustBtn}
+      </div>
+      ${e.status==='rejected'&&e.rejectionReason?`<div class="rejection-note">❌ reason: ${e.rejectionReason}</div>`:''}
+      ${e.trusted?`<div class="trusted-note"><i class="ti ti-rosette" aria-hidden="true"></i> trusted by ${e.trustedBy||'admin'}${e.trustedDate?' on '+e.trustedDate:''}</div>`:''}
+      <div class="mod-reason-wrap" id="reject-wrap-${e.id}" style="display:none;">
+        <input class="mod-reason-input" id="reject-reason-${e.id}" placeholder="reason for rejection (optional)..."/>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-reject" onclick="confirmReject(${e.id})"><i class="ti ti-x" aria-hidden="true"></i> confirm reject</button>
+          <button onclick="document.getElementById('reject-wrap-${e.id}').style.display='none'" style="padding:6px 12px;border:0.5px solid var(--border2);border-radius:var(--rs);font-size:12px;background:transparent;color:var(--muted);">cancel</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleTrust(id){
+  if(!isAdmin){showToast('🔒 admin login required to assign trusted.');return;}
+  const e=allExts.find(x=>x.id===id);
+  if(!e)return;
+  e.trusted=!e.trusted;
+  if(e.trusted){e.trustedBy='admin';e.trustedDate=new Date().toLocaleDateString('en-US',{month:'short',year:'numeric'});}
+  else{delete e.trustedBy;delete e.trustedDate;}
+  updateStats();render();renderMod();
+  showToast(e.trusted?`⭐ "${e.name}" is now trusted!`:`Removed trusted from "${e.name}".`);
+}
+
+function moderateExt(id,status,reason){
+  const e=allExts.find(x=>x.id===id);
+  if(!e)return;
+  e.status=status;
+  if(reason!==undefined)e.rejectionReason=reason;
+  updateStats();render();renderMod();
+  showToast(status==='approved'?'✅ approved! now live.':'❌ rejected & hidden.');
+}
+function showRejectInput(id){const w=document.getElementById('reject-wrap-'+id);if(w)w.style.display='block';}
+function confirmReject(id){const r=document.getElementById('reject-reason-'+id).value.trim();moderateExt(id,'rejected',r||undefined);}
+
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showAdminGate(){
+  if(isAdmin){logoutAdmin();return;}
+  showPage('admin-gate');
+  setTimeout(()=>document.getElementById('admin-pw').focus(),100);
+}
+
+function tryAdminLogin(){
+  const pw=document.getElementById('admin-pw').value;
+  if(pw===ADMIN_PASSWORD){
+    isAdmin=true;
+    document.getElementById('admin-nav-label').textContent='admin ✓';
+    document.getElementById('admin-error').style.display='none';
+    document.getElementById('admin-pw').value='';
+    showPage('mod');
+    renderMod();
+    showToast('👑 admin mode unlocked! you can now assign trusted tags.');
+  }else{
+    document.getElementById('admin-error').style.display='block';
+    document.getElementById('admin-pw').value='';
+    document.getElementById('admin-pw').focus();
+  }
+}
+
+function logoutAdmin(){
+  isAdmin=false;
+  document.getElementById('admin-nav-label').textContent='admin';
+  renderMod();
+  showToast('Logged out of admin mode.');
+}
+
+document.getElementById('admin-pw').addEventListener('keydown',e=>{if(e.key==='Enter')tryAdminLogin();});
+
+document.getElementById('back-btn').addEventListener('click',()=>showPage('list'));
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter=btn.dataset.filter;
+    render();
+  });
+});
+document.getElementById('search-box').addEventListener('input',e=>{searchQ=e.target.value.toLowerCase();render();});
+
+document.querySelectorAll('.mod-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.mod-tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeMTab=btn.dataset.mtab;
+    renderMod();
+  });
+});
+
+const modal=document.getElementById('modal-overlay');
+document.getElementById('open-modal-btn').addEventListener('click',()=>modal.classList.add('open'));
+document.getElementById('cancel-btn').addEventListener('click',()=>modal.classList.remove('open'));
+modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('open');});
+
+document.getElementById('file-input').addEventListener('change',e=>{
+  const f=e.target.files[0];
+  if(f){modal.classList.add('open');document.getElementById('file-chosen').textContent='📎 '+f.name;if(!document.getElementById('inp-name').value)document.getElementById('inp-name').value=f.name.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');}
+});
+const dropZone=document.getElementById('drop-zone');
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover');});
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop',e=>{
+  e.preventDefault();dropZone.classList.remove('dragover');
+  const f=e.dataTransfer.files[0];
+  if(f){modal.classList.add('open');document.getElementById('file-chosen').textContent='📎 '+f.name;if(!document.getElementById('inp-name').value)document.getElementById('inp-name').value=f.name.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');}
+});
+
+document.getElementById('submit-btn').addEventListener('click',()=>{
+  const name=document.getElementById('inp-name').value.trim();
+  const author=document.getElementById('inp-author').value.trim();
+  const desc=document.getElementById('inp-desc').value.trim();
+  const type=document.getElementById('inp-type').value;
+  const emoji=document.getElementById('inp-emoji').value.trim()||'📦';
+  const scratch=document.getElementById('inp-scratch').value.trim();
+  const tags=document.getElementById('inp-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  if(!name||!author||!desc){showToast('⚠️ name, author and description required.');return;}
+  allExts.unshift({id:Date.now(),name,author,desc,type,emoji,downloads:0,rating:0,reviews:0,tags:tags.length?tags:['new'],file:'uploads/pending.js',scratchLink:scratch||'',status:'pending',trusted:false,isNew:true,versions:[{v:'v1.0',date:'May 2026',notes:'Initial submission',file:'uploads/pending.js'}]});
+  modal.classList.remove('open');
+  ['inp-name','inp-author','inp-desc','inp-emoji','inp-scratch','inp-tags'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('file-chosen').textContent='';
+  document.getElementById('file-input').value='';
+  updateStats();render();renderMod();
+  showToast('📬 submitted! awaiting moderation review.');
+});
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+loadExtensions();
+</script>
+</body>
+</html>
