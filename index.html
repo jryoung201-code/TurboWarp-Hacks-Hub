@@ -6,6 +6,7 @@
 <title>TurboWarp Ext Hub</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<script src="auth.js"><\/script>
 <style>
 :root{
   --bg:#0a0a14;--surface:#12121f;--surface2:#1a1a2e;--surface3:#222238;
@@ -263,7 +264,7 @@ nav{background:var(--surface);border-bottom:0.5px solid var(--border);padding:0 
     <i class="ti ti-shield-check" aria-hidden="true"></i> mod
     <span id="nav-pending-badge" style="display:none;background:var(--amber);color:#000;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-left:2px;"></span>
   </button>
-  <button class="nav-btn nav-btn-admin" onclick="showAdminGate()" id="admin-nav-btn">
+  <button class="nav-btn nav-btn-admin" onclick="handleAdminNav()" id="admin-nav-btn">
     <i class="ti ti-crown" aria-hidden="true"></i> <span id="admin-nav-label">admin</span>
   </button>
 </nav>
@@ -341,22 +342,6 @@ nav{background:var(--surface);border-bottom:0.5px solid var(--border);padding:0 
   <div class="mod-list" id="mod-list"></div>
 </div>
 
-<!-- ADMIN GATE PAGE -->
-<div id="page-admin-gate" class="page">
-  <div class="admin-login-wrap">
-    <div class="admin-card">
-      <h2>👑 admin login</h2>
-      <p>enter the admin password to unlock trust controls</p>
-      <input class="admin-input" type="password" id="admin-pw" placeholder="password" autocomplete="off"/>
-      <div class="admin-error" id="admin-error">incorrect password</div>
-      <button class="admin-login-btn" onclick="tryAdminLogin()">unlock admin</button>
-      <div style="margin-top:12px;text-align:center;">
-        <button onclick="showPage('list')" style="background:transparent;border:none;color:var(--muted);font-size:12px;cursor:pointer;">← back to hub</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 </div><!-- /container -->
 
 <!-- SUBMIT MODAL -->
@@ -388,7 +373,6 @@ nav{background:var(--surface);border-bottom:0.5px solid var(--border);padding:0 
 <script>
 const REPO_BASE='./';
 const JSON_URL=REPO_BASE+'extensions.json';
-const ADMIN_PASSWORD='turboadmin2026'; // Change this!
 const emojiBg={extension:'#e8e8ff',hack:'#ffe0e0',mod:'#e8fff5'};
 const tagCls={extension:'tag-extension',hack:'tag-hack',mod:'tag-mod'};
 
@@ -396,7 +380,7 @@ let allExts=[];
 let activeFilter='all';
 let searchQ='';
 let activeMTab='pending';
-let isAdmin=false;
+let isAdmin = Auth.isAdmin();
 
 async function loadExtensions(){
   try{
@@ -646,37 +630,18 @@ function showPage(p){
   window.scrollTo(0,0);
 }
 
-function showAdminGate(){
-  if(isAdmin){logoutAdmin();return;}
-  showPage('admin-gate');
-  setTimeout(()=>document.getElementById('admin-pw').focus(),100);
-}
-
-function tryAdminLogin(){
-  const pw=document.getElementById('admin-pw').value;
-  if(pw===ADMIN_PASSWORD){
-    isAdmin=true;
-    document.getElementById('admin-nav-label').textContent='admin ✓';
-    document.getElementById('admin-error').style.display='none';
-    document.getElementById('admin-pw').value='';
-    showPage('mod');
+function handleAdminNav(){
+  if(isAdmin){
+    Auth.logout();
+    isAdmin=false;
+    document.getElementById('admin-nav-label').textContent='admin';
     renderMod();
-    showToast('👑 admin mode unlocked! you can now assign trusted tags.');
-  }else{
-    document.getElementById('admin-error').style.display='block';
-    document.getElementById('admin-pw').value='';
-    document.getElementById('admin-pw').focus();
+    showToast('Logged out of admin mode.');
+    window.location.href='login.html?logout=1';
+  } else {
+    window.location.href='login.html';
   }
 }
-
-function logoutAdmin(){
-  isAdmin=false;
-  document.getElementById('admin-nav-label').textContent='admin';
-  renderMod();
-  showToast('Logged out of admin mode.');
-}
-
-document.getElementById('admin-pw').addEventListener('keydown',e=>{if(e.key==='Enter')tryAdminLogin();});
 
 document.getElementById('back-btn').addEventListener('click',()=>showPage('list'));
 
@@ -741,6 +706,22 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),3200);
 }
 
+// Check session state on load
+(function(){
+  const session = Auth.getSession();
+  if(session && session.role==='admin'){
+    isAdmin=true;
+    document.getElementById('admin-nav-label').textContent='admin ✓';
+  }
+  // Show login redirect if came from login page
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('loggedin')==='1' && isAdmin){
+    showPage('mod');
+    renderMod();
+    showToast('👑 welcome back, admin! you can now assign trusted tags.');
+    window.history.replaceState({},'',window.location.pathname);
+  }
+})();
 loadExtensions();
 </script>
 </body>
