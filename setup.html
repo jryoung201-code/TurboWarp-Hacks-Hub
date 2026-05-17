@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TurboWarp Hub — Admin Setup</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#0a0a14;--surface:#12121f;--surface2:#1a1a2e;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);--text:#f0f0ff;--muted:#8888aa;--accent:#4f46e5;--gold:#fbbf24;--gold-l:rgba(251,191,36,0.12);--gold-b:rgba(251,191,36,0.35);--green:#10b981;--green-l:rgba(16,185,129,0.12);--green-b:rgba(16,185,129,0.35);--red:#ef4444;--red-l:rgba(239,68,68,0.12);--red-b:rgba(239,68,68,0.35);--r:12px;--rs:8px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
+.card{background:var(--surface);border:0.5px solid var(--gold-b);border-radius:var(--r);padding:2rem;width:100%;max-width:480px;}
+.card-logo{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;}
+.card-logo-icon{width:36px;height:36px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.card-logo-text{font-size:18px;font-weight:800;}.card-logo-text span{color:#818cf8;}
+h2{font-size:20px;font-weight:800;margin-bottom:4px;}
+.sub{font-size:12px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:1.5rem;line-height:1.6;}
+.step{background:var(--surface2);border-radius:var(--rs);padding:1rem 1.25rem;margin-bottom:1rem;border:0.5px solid var(--border);}
+.step-num{font-size:10px;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.step-title{font-size:14px;font-weight:700;margin-bottom:10px;}
+.form-label{font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);display:block;margin-bottom:4px;}
+.form-input{width:100%;padding:9px 12px;background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--rs);color:var(--text);font-size:13px;font-family:'Space Mono',monospace;outline:none;margin-bottom:8px;transition:border-color 0.15s;}
+.form-input:focus{border-color:var(--gold);}
+.btn{padding:9px 18px;border-radius:var(--rs);font-size:13px;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;border:none;transition:all 0.15s;}
+.btn-gold{background:var(--gold);color:#000;width:100%;}
+.btn-gold:hover{opacity:0.9;}
+.btn-secondary{background:transparent;border:0.5px solid var(--border2);color:var(--muted);padding:7px 14px;font-size:12px;}
+.hash-output{background:var(--bg);border:0.5px solid var(--border2);border-radius:var(--rs);padding:10px 12px;font-family:'Space Mono',monospace;font-size:11px;color:var(--gold);word-break:break-all;margin:8px 0;display:none;line-height:1.6;}
+.hash-output.visible{display:block;}
+.instructions{background:var(--surface2);border:0.5px solid var(--gold-b);border-radius:var(--rs);padding:1rem 1.25rem;margin-top:1rem;font-size:12px;color:var(--muted);line-height:1.8;display:none;}
+.instructions.visible{display:block;}
+.instructions code{font-family:'Space Mono',monospace;background:var(--bg);padding:1px 5px;border-radius:3px;font-size:11px;color:var(--text);}
+.instructions strong{color:var(--gold);}
+.alert{padding:10px 14px;border-radius:var(--rs);font-size:12px;font-family:'Space Mono',monospace;margin-top:8px;display:none;}
+.alert.visible{display:block;}
+.alert-success{background:var(--green-l);border:0.5px solid var(--green-b);color:var(--green);}
+.alert-error{background:var(--red-l);border:0.5px solid var(--red-b);color:var(--red);}
+.divider{height:0.5px;background:var(--border);margin:1.5rem 0;}
+.copy-btn{float:right;padding:3px 8px;background:var(--surface2);border:0.5px solid var(--border2);border-radius:4px;font-size:10px;color:var(--muted);cursor:pointer;font-family:'Space Mono',monospace;}
+.copy-btn:hover{color:var(--text);}
+.pw-strength{height:3px;border-radius:2px;margin-bottom:8px;transition:all 0.3s;background:var(--border2);}
+.pw-strength.weak{background:#ef4444;width:33%;}
+.pw-strength.medium{background:#f59e0b;width:66%;}
+.pw-strength.strong{background:#10b981;width:100%;}
+.pw-label{font-size:10px;font-family:'Space Mono',monospace;margin-bottom:8px;}
+.pw-label.weak{color:#ef4444;}
+.pw-label.medium{color:#f59e0b;}
+.pw-label.strong{color:#10b981;}
+.back-link{text-align:center;margin-top:1.25rem;}
+.back-link a{font-size:12px;color:var(--muted);cursor:pointer;text-decoration:none;}
+.back-link a:hover{color:var(--text);}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="card-logo">
+    <div class="card-logo-icon">⚡</div>
+    <div class="card-logo-text">TurboWarp <span>Ext Hub</span></div>
+  </div>
+
+  <h2>👑 admin account setup</h2>
+  <div class="sub">this page generates a SHA-256 password hash for your <code style="font-family:'Space Mono',monospace;background:rgba(255,255,255,0.06);padding:1px 5px;border-radius:3px;">users.json</code> file. the raw password is never stored — only the hash.</div>
+
+  <div class="step">
+    <div class="step-num">step 1</div>
+    <div class="step-title">enter your credentials</div>
+    <label class="form-label">username</label>
+    <input class="form-input" id="username" placeholder="admin" value="admin"/>
+    <label class="form-label">new password</label>
+    <input class="form-input" type="password" id="password" placeholder="choose a strong password" oninput="checkStrength()"/>
+    <div class="pw-strength" id="pw-strength"></div>
+    <div class="pw-label" id="pw-label"></div>
+    <label class="form-label">confirm password</label>
+    <input class="form-input" type="password" id="confirm" placeholder="repeat password"/>
+    <button class="btn btn-gold" onclick="generateHash()">generate hash</button>
+    <div class="alert alert-error" id="error-msg"></div>
+  </div>
+
+  <div class="step" id="step2" style="display:none;">
+    <div class="step-num">step 2</div>
+    <div class="step-title">copy your password hash</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">paste this into <code style="font-family:'Space Mono',monospace;background:rgba(255,255,255,0.06);padding:1px 4px;border-radius:3px;">users.json</code> as the <code style="font-family:'Space Mono',monospace;background:rgba(255,255,255,0.06);padding:1px 4px;border-radius:3px;">passwordHash</code> value.</div>
+    <button class="copy-btn" onclick="copyHash()">copy</button>
+    <div class="hash-output visible" id="hash-output"></div>
+    <div class="alert alert-success" id="copy-confirm" style="display:none;">✅ copied to clipboard!</div>
+  </div>
+
+  <div class="instructions" id="instructions">
+    <strong>what to do with this hash:</strong><br><br>
+    1. Open <code>users.json</code> in your repo.<br>
+    2. Find the entry where <code>"username": "admin"</code>.<br>
+    3. Replace <code>"passwordHash": ""</code> with:<br>
+    <code style="word-break:break-all;" id="inline-hash-preview"></code><br><br>
+    4. Commit and push to GitHub.<br>
+    5. Log in at <code>index.html</code> using your password.
+  </div>
+
+  <div class="divider"></div>
+  <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;line-height:1.8;">
+    🔒 hashing: SHA-256 via Web Crypto API<br>
+    🧂 salt format: <code style="background:rgba(255,255,255,0.05);padding:1px 4px;border-radius:3px;">username:password</code><br>
+    💾 storage: hash only — password never saved<br>
+    ⏱ session: expires after 24 hours
+  </div>
+
+  <div class="back-link"><a href="index.html">← back to hub</a></div>
+</div>
+
+<script>
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function checkStrength() {
+  const pw = document.getElementById('password').value;
+  const bar = document.getElementById('pw-strength');
+  const label = document.getElementById('pw-label');
+  if (!pw) { bar.className = 'pw-strength'; label.textContent = ''; return; }
+  const hasUpper = /[A-Z]/.test(pw);
+  const hasNum = /[0-9]/.test(pw);
+  const hasSpecial = /[^a-zA-Z0-9]/.test(pw);
+  const score = (pw.length >= 8 ? 1 : 0) + (pw.length >= 12 ? 1 : 0) + (hasUpper ? 1 : 0) + (hasNum ? 1 : 0) + (hasSpecial ? 1 : 0);
+  if (score <= 2) { bar.className = 'pw-strength weak'; label.className = 'pw-label weak'; label.textContent = 'weak password'; }
+  else if (score <= 3) { bar.className = 'pw-strength medium'; label.className = 'pw-label medium'; label.textContent = 'medium password'; }
+  else { bar.className = 'pw-strength strong'; label.className = 'pw-label strong'; label.textContent = 'strong password ✓'; }
+}
+
+async function generateHash() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  const confirm = document.getElementById('confirm').value;
+  const errEl = document.getElementById('error-msg');
+
+  errEl.className = 'alert alert-error';
+  if (!username) { errEl.textContent = '⚠️ username is required'; errEl.classList.add('visible'); return; }
+  if (password.length < 8) { errEl.textContent = '⚠️ password must be at least 8 characters'; errEl.classList.add('visible'); return; }
+  if (password !== confirm) { errEl.textContent = '⚠️ passwords do not match'; errEl.classList.add('visible'); return; }
+  errEl.classList.remove('visible');
+
+  const hash = await sha256(username.toLowerCase() + ':' + password);
+
+  document.getElementById('hash-output').textContent = hash;
+  document.getElementById('inline-hash-preview').textContent = '"passwordHash": "' + hash + '"';
+  document.getElementById('step2').style.display = 'block';
+  document.getElementById('instructions').classList.add('visible');
+  document.getElementById('step2').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function copyHash() {
+  const hash = document.getElementById('hash-output').textContent;
+  try {
+    await navigator.clipboard.writeText(hash);
+    const el = document.getElementById('copy-confirm');
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 2000);
+  } catch (e) {
+    alert('Copy manually: ' + hash);
+  }
+}
+</script>
+</body>
+</html>

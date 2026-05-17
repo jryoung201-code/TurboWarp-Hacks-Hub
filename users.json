@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "passwordHash": "66094034e1128bc686389d43aa0af4f4f7cc61f7b0d710c8eed090989e56b7a8",
+    "role": "admin",
+    "createdAt": "2026-05-17",
+    "lastLogin": null,
+    "note": "Default password: turboadmin2026 — change via setup.html after first login"
+  },
+  {
+    "id": 2,
+    "username": "moderator",
+    "passwordHash": "",
+    "role": "moderator",
+    "createdAt": "2026-05-17",
+    "lastLogin": null,
+    "note": "Run setup.html to generate a hash for this account"
+  }
+]

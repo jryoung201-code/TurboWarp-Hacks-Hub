@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "name": "TurboClone X",
+    "author": "ScratchDev99",
+    "desc": "Clone up to 500 sprites with turbo speed. Bypasses the default 300-clone limit so your projects can go full throttle.",
+    "type": "extension",
+    "emoji": "🚀",
+    "downloads": 412,
+    "rating": 4.7,
+    "reviews": 58,
+    "tags": ["clones", "performance", "limits"],
+    "file": "uploads/turboclone_x.js",
+    "scratchLink": "https://scratch.mit.edu/projects/123456789",
+    "status": "approved",
+    "trusted": true,
+    "trustedBy": "admin",
+    "trustedDate": "May 2026",
+    "versions": [
+      { "v": "v2.1", "date": "May 2026", "notes": "Fixed sprite disposal bug", "file": "uploads/turboclone_x.js" },
+      { "v": "v2.0", "date": "Apr 2026", "notes": "Added async clone support", "file": "uploads/turboclone_x_v2.js" },
+      { "v": "v1.0", "date": "Jan 2026", "notes": "Initial release", "file": "uploads/turboclone_x_v1.js" }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "God Mode Hack",
+    "author": "h4x0rKid",
+    "desc": "Removes all script execution limits in your TurboWarp projects. Use with caution — can freeze the editor on heavy scripts.",
+    "type": "hack",
+    "emoji": "💀",
+    "downloads": 891,
+    "rating": 4.2,
+    "reviews": 103,
+    "tags": ["limits", "performance", "advanced"],
+    "file": "uploads/god_mode.js",
+    "scratchLink": "https://scratch.mit.edu/projects/987654321",
+    "status": "approved",
+    "trusted": false,
+    "versions": [
+      { "v": "v1.3", "date": "May 2026", "notes": "Compatibility with TW 1.12", "file": "uploads/god_mode.js" },
+      { "v": "v1.0", "date": "Feb 2026", "notes": "Initial release", "file": "uploads/god_mode_v1.js" }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Custom Blocks+",
+    "author": "blocksmaster",
+    "desc": "Adds 30 new block shapes, colors, and categories to your palette. Fully compatible with vanilla Scratch exports.",
+    "type": "mod",
+    "emoji": "🎨",
+    "downloads": 237,
+    "rating": 4.9,
+    "reviews": 31,
+    "tags": ["blocks", "ui", "customization"],
+    "file": "uploads/custom_blocks_plus.js",
+    "scratchLink": "",
+    "status": "pending",
+    "trusted": false,
+    "versions": [
+      { "v": "v3.0", "date": "May 2026", "notes": "New color picker block", "file": "uploads/custom_blocks_plus.js" },
+      { "v": "v2.5", "date": "Mar 2026", "notes": "Bug fixes", "file": "uploads/custom_blocks_plus_v2.js" },
+      { "v": "v1.0", "date": "Dec 2025", "notes": "Initial release", "file": "uploads/custom_blocks_plus_v1.js" }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Speed Booster",
+    "author": "turbofan22",
+    "desc": "Unlocks uncapped FPS and faster tick rates for smoother animations and gameplay.",
+    "type": "hack",
+    "emoji": "💨",
+    "downloads": 0,
+    "rating": 0,
+    "reviews": 0,
+    "tags": ["fps", "performance", "speed"],
+    "file": "uploads/speed_booster.js",
+    "scratchLink": "https://scratch.mit.edu/projects/111222333",
+    "status": "rejected",
+    "trusted": false,
+    "rejectionReason": "File contains obfuscated code. Please submit readable source.",
+    "versions": [
+      { "v": "v1.0", "date": "May 2026", "notes": "Initial submission", "file": "uploads/speed_booster.js" }
+    ]
+  }
+]
